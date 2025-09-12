@@ -44,7 +44,7 @@ export default function ImagesPage() {
       }
 
       const data = await response.json()
-      setImages(data)
+      setImages(data.images || [])
     } catch (err) {
       console.error("Fetch images error:", err)
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -327,7 +327,7 @@ export default function ImagesPage() {
                     </div>
 
                     {/* Selection checkbox */}
-                    <div className="absolute top-2 left-2">
+                    <div className="absolute z-10 top-2 left-2">
                       <input
                         type="checkbox"
                         checked={selectedImages.has(image.url)}

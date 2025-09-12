@@ -26,7 +26,7 @@ interface PostFormProps {
     tags: string;
     category: string;
     featured_image: string;
-    published: boolean;
+    published: number;
   };
 }
 
@@ -46,7 +46,7 @@ export default function PostForm({ post }: PostFormProps) {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
-  const [published, setPublished] = useState(post?.published || false);
+  const [published, setPublished] = useState(post?.published === 1 || false);
 
   const router = useRouter();
   const { toasts, toast, removeToast } = useToast();

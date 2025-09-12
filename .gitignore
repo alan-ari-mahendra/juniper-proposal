@@ -35,3 +35,4 @@ data/*.db-wal
 
 package-lock.json
 public/uploads/images
+upload-image/uploads/images

@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
 
     const sanitizedOriginalName = sanitizeFilename(file.name)
 
-    const uploadsDir = path.resolve(process.cwd(), "public", "uploads", "images")
+    const uploadsDir = path.resolve(process.cwd(), "upload-image", "uploads", "images")
     const yearMonth = new Date()
       .toISOString()
       .slice(0, 7)

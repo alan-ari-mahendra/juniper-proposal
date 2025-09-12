@@ -82,26 +82,33 @@ export const postSchema = z.object({
     )
     .optional()
     .transform((val) => val?.trim()),
+  // featured_image: z
+  //   .string()
+  //   .optional()
+  //   .or(z.literal(""))
+  //   .refine((val) => {
+  //     if (!val || val === "") return true;
+  //     // More restrictive URL validation
+  //     if (val.startsWith("http")) {
+  //       try {
+  //         const url = new URL(val);
+  //         return ["http:", "https:"].includes(url.protocol);
+  //       } catch {
+  //         return false;
+  //       }
+  //     }
+  //     // Validate file paths more strictly
+  //     return /^\/uploads\/images\/\d{4}-\d{2}\/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp|gif)$/i.test(
+  //       val
+  //     );
+  //   }, "Must be a valid HTTPS URL or valid upload path"),
   featured_image: z
     .string()
     .optional()
     .or(z.literal(""))
-    .refine((val) => {
-      if (!val || val === "") return true;
-      // More restrictive URL validation
-      if (val.startsWith("http")) {
-        try {
-          const url = new URL(val);
-          return ["http:", "https:"].includes(url.protocol);
-        } catch {
-          return false;
-        }
-      }
-      // Validate file paths more strictly
-      return /^\/uploads\/images\/\d{4}-\d{2}\/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp|gif)$/i.test(
-        val
-      );
-    }, "Must be a valid HTTPS URL or valid upload path"),
+    .refine((val) => !val || val.startsWith("http") || val.startsWith("/"), {
+      message: "Must be a valid HTTPS URL or valid upload path",
+    }),
   published: z.boolean().optional(),
 });
 
