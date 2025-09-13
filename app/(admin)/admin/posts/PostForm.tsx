@@ -132,7 +132,8 @@ export default function PostForm({ post }: PostFormProps) {
       const data = await response.json();
 
       if (response.ok) {
-        setFeaturedImage(data.url);
+        const publicUrl = `/api/files/${data.url}`;
+        setFeaturedImage(publicUrl);
         toast({
           type: "success",
           title: "Success",
