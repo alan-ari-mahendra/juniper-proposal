@@ -66,10 +66,6 @@ export default function LoginForm() {
 
   return (
     <div className="space-y-6">
-      <div className="px-4 py-3 text-sm text-center text-gray-600 bg-gray-100 rounded-lg">
-        Default credentials: admin / admin123
-      </div>
-
       <form action={handleSubmit} className="space-y-4">
         <div>
           <input
