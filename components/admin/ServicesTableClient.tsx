@@ -1,30 +1,38 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import UniversalBulkActions from "@/components/admin/UniversalBulkActions"
-import { servicesBulkConfig } from "@/lib/admin-configs"
+import Link from "next/link";
+import UniversalBulkActions from "@/components/admin/UniversalBulkActions";
+import { servicesBulkConfig } from "@/lib/admin-configs";
 
 interface Service {
-  id: number
-  title: string
-  slug: string
-  description: string
-  active: number
-  order_index: number
-  created_at: string
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  active: number;
+  order_index: number;
+  created_at: string;
 }
 
 interface ServicesTableClientProps {
-  services: Service[]
-  deleteService: (formData: FormData) => Promise<void>
+  services: Service[];
+  deleteService: (formData: FormData) => Promise<void>;
 }
 
-export default function ServicesTableClient({ services, deleteService }: ServicesTableClientProps) {
+export default function ServicesTableClient({
+  services,
+  deleteService,
+}: ServicesTableClientProps) {
   if (!services || !Array.isArray(services) || services.length === 0) {
     return (
-      <div className="text-center py-12 bg-white rounded-lg shadow">
-        <div className="mx-auto w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="py-12 text-center bg-white rounded-lg shadow">
+        <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-lg">
+          <svg
+            className="w-6 h-6 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -33,23 +41,37 @@ export default function ServicesTableClient({ services, deleteService }: Service
             />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No services yet</h3>
-        <p className="text-gray-500 mb-6">Get started by creating your first service.</p>
+        <h3 className="mb-2 text-lg font-medium text-gray-900">
+          No services yet
+        </h3>
+        <p className="mb-6 text-gray-500">
+          Get started by creating your first service.
+        </p>
         <Link
           href="/admin/services/new"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center"
+          className="inline-flex items-center px-6 py-3 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
         >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          <svg
+            className="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
           </svg>
           Create Your First Service
         </Link>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
+    <div className="overflow-hidden bg-white rounded-lg shadow">
       <UniversalBulkActions items={services} config={servicesBulkConfig} />
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
@@ -59,15 +81,19 @@ export default function ServicesTableClient({ services, deleteService }: Service
                 <input
                   type="checkbox"
                   id="select-all"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                 Service
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                Status
+              </th>
+              <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                Order
+              </th>
+              <th className="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">
                 Actions
               </th>
             </tr>
@@ -78,35 +104,48 @@ export default function ServicesTableClient({ services, deleteService }: Service
                 <td className="px-6 py-4">
                   <input
                     type="checkbox"
-                    className="service-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded service-checkbox focus:ring-blue-500"
                     data-id={service.id}
                   />
                 </td>
                 <td className="px-6 py-4">
                   <div className="max-w-xs">
-                    <div className="text-sm font-medium text-gray-900 truncate">{service.title}</div>
-                    <div className="text-sm text-gray-500 truncate mt-1">{service.description}</div>
+                    <div className="text-sm font-medium text-gray-900 truncate">
+                      {service.title}
+                    </div>
+                    <div className="mt-1 text-sm text-gray-500 truncate">
+                      {service.description}
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      service.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                      service.active
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
                     }`}
                   >
                     {service.active ? "Active" : "Inactive"}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">#{service.order_index}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                  #{service.order_index}
+                </td>
+                <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                   <div className="flex items-center justify-end space-x-3">
                     <Link
-                      href={`/services/${service.slug}`}
+                      href={`/#services`}
                       target="_blank"
-                      className="text-gray-600 hover:text-gray-900 inline-flex items-center"
+                      className="inline-flex items-center text-gray-600 hover:text-gray-900"
                       title="View Service"
                     >
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg
+                        className="w-4 h-4 mr-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -124,9 +163,14 @@ export default function ServicesTableClient({ services, deleteService }: Service
                     </Link>
                     <Link
                       href={`/admin/services/${service.id}/edit`}
-                      className="text-blue-600 hover:text-blue-900 inline-flex items-center"
+                      className="inline-flex items-center text-blue-600 hover:text-blue-900"
                     >
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg
+                        className="w-4 h-4 mr-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -141,14 +185,23 @@ export default function ServicesTableClient({ services, deleteService }: Service
                       <button
                         type="submit"
                         onClick={(e) => {
-                          if (!confirm("Are you sure you want to delete this service?")) {
-                            e.preventDefault()
+                          if (
+                            !confirm(
+                              "Are you sure you want to delete this service?"
+                            )
+                          ) {
+                            e.preventDefault();
                           }
                         }}
-                        className="text-red-600 hover:text-red-900 inline-flex items-center"
+                        className="inline-flex items-center text-red-600 hover:text-red-900"
                         title="Delete Service"
                       >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg
+                          className="w-4 h-4 mr-1"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -167,5 +220,5 @@ export default function ServicesTableClient({ services, deleteService }: Service
         </table>
       </div>
     </div>
-  )
+  );
 }
