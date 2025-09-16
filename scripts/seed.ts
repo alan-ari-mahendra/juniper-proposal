@@ -1,21 +1,30 @@
-import bcrypt from "bcryptjs"
-import { run, get } from "../lib/db"
-import { slugify } from "../lib/utils"
+import bcrypt from "bcryptjs";
+import { run, get } from "../lib/db";
+import { slugify } from "../lib/utils";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 async function seed() {
-  console.log("Seeding database...")
+  console.log("Seeding database...");
 
-  const adminPassword = process.env.ADMIN_DEFAULT_PASSWORD || "admin123"
-  const hashedPassword = await bcrypt.hash(adminPassword, 12)
+  const adminPassword = process.env.ADMIN_DEFAULT_PASSWORD || "admin123";
+  const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
   // Create admin user if doesn't exist
-  const existingUser = get("SELECT id FROM users WHERE username = ?", ["admin"])
+  const existingUser = get("SELECT id FROM users WHERE username = ?", [
+    "admin",
+  ]);
 
   if (!existingUser) {
-    run("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)", ["admin", hashedPassword, "admin"])
-    console.log("✓ Admin user created")
+    run("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)", [
+      "admin",
+      hashedPassword,
+      "admin",
+    ]);
+    console.log("✓ Admin user created");
   } else {
-    console.log("✓ Admin user already exists")
+    console.log("✓ Admin user already exists");
   }
 
   // Create sample posts
@@ -34,7 +43,8 @@ This is our first blog post! We're excited to share our thoughts and insights wi
 - Community highlights
 
 Stay tuned for more great content!`,
-      excerpt: "Welcome to our new blog! Learn what to expect from our upcoming content.",
+      excerpt:
+        "Welcome to our new blog! Learn what to expect from our upcoming content.",
       tags: "welcome,announcement,blog",
       published: 1,
     },
@@ -60,7 +70,8 @@ npm run dev
 \`\`\`
 
 Happy coding!`,
-      excerpt: "Learn the basics of Next.js and why it's perfect for modern web development.",
+      excerpt:
+        "Learn the basics of Next.js and why it's perfect for modern web development.",
       tags: "nextjs,react,tutorial,web-development",
       published: 1,
     },
@@ -81,27 +92,35 @@ Check back later!`,
       tags: "draft,preview",
       published: 0,
     },
-  ]
+  ];
 
   for (const post of samplePosts) {
-    const slug = slugify(post.title)
-    const existingPost = get("SELECT id FROM posts WHERE slug = ?", [slug])
+    const slug = slugify(post.title);
+    const existingPost = get("SELECT id FROM posts WHERE slug = ?", [slug]);
 
     if (!existingPost) {
-      const publishedAt = post.published ? new Date().toISOString() : null
+      const publishedAt = post.published ? new Date().toISOString() : null;
 
       run(
         `INSERT INTO posts (title, slug, excerpt, content, tags, published, published_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [post.title, slug, post.excerpt, post.content, post.tags, post.published, publishedAt],
-      )
+        [
+          post.title,
+          slug,
+          post.excerpt,
+          post.content,
+          post.tags,
+          post.published,
+          publishedAt,
+        ]
+      );
 
-      console.log(`✓ Created post: ${post.title}`)
+      console.log(`✓ Created post: ${post.title}`);
     }
   }
 
-  console.log("Database seeded successfully!")
-  console.log(`Admin credentials: admin / ${adminPassword}`)
+  console.log("Database seeded successfully!");
+  console.log(`Admin credentials: admin / ${adminPassword}`);
 }
 
-seed().catch(console.error)
+seed().catch(console.error);
