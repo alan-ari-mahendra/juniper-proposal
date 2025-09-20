@@ -14,6 +14,7 @@ export interface CrudConfig<T = any> {
   defaultValues?: Record<string, any>;
   transformData?: (data: T) => Record<string, any>;
   publicFilter?: string
+  orderBy?: string;
 }
 
 function sanitizeTableName(tableName: string): string {
@@ -105,12 +106,22 @@ export async function handleList<T>(
     const whereClause = whereClauses.length
         ? `WHERE ${whereClauses.join(" AND ")}`
         : "";
-
     const offset = (page - 1) * limit;
+    function hasColumn(table: string, column: string): boolean {
+      try {
+        const cols = query<{ name: string }>(`PRAGMA table_info(${table})`);
+        return cols.some(c => c.name === column);
+      } catch {
+        return false;
+      }
+    }
+    const orderBy = hasColumn(safeTableName, "order_index")
+        ? "order_index ASC, created_at DESC"
+        : "created_at DESC";
 
     const items = query(
-      `SELECT * FROM ${safeTableName} ${whereClause} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
-      [...params, limit, offset]
+        `SELECT * FROM ${safeTableName} ${whereClause} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
+        [...params, limit, offset]
     );
 
     if (simple) {
@@ -768,6 +779,69 @@ export async function handleBulkUpdate<T>(
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
+    );
+  }
+}
+// Universal BULK REORDER handler
+export async function handleReorder<T>(
+    request: NextRequest,
+    config: CrudConfig<T>
+): Promise<NextResponse> {
+  try {
+    const rateLimitResult = applyRateLimit(request, "bulk");
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+          { error: rateLimitResult.error },
+          { status: 429 }
+      );
+    }
+
+    const authResult = await requireAuthAPI(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
+    }
+
+    // Parse body
+    const body = await request.json();
+    const { csrfToken, items } = body;
+
+    if (!csrfToken || !(await verifyCSRFToken(csrfToken))) {
+      return NextResponse.json(
+          { error: "Invalid CSRF token" },
+          { status: 403 }
+      );
+    }
+
+    if (!Array.isArray(items)) {
+      return NextResponse.json(
+          { error: "Invalid payload: items must be an array" },
+          { status: 400 }
+      );
+    }
+
+    const safeTableName = sanitizeTableName(config.tableName);
+
+    const stmt = run;
+    const dbUpdates = [];
+
+    for (const item of items) {
+      if (!item.id || typeof item.order_index !== "number") continue;
+      dbUpdates.push(
+          stmt(
+              `UPDATE ${safeTableName} 
+           SET order_index = ?, updated_at = CURRENT_TIMESTAMP 
+           WHERE id = ?`,
+              [item.order_index, item.id]
+          )
+      );
+    }
+
+    return NextResponse.json({ success: true, updated: items.length });
+  } catch (error: any) {
+    console.error(`Reorder ${config.tableName} error:`, error.message);
+    return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 }
     );
   }
 }

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import UniversalBulkActions from "@/components/admin/UniversalBulkActions";
 import { servicesBulkConfig } from "@/lib/admin-configs";
+import {useState} from "react";
+import {useCsrfToken} from "@/hooks/use-csrf-token";
 
 interface Service {
   id: number;
@@ -23,6 +25,52 @@ export default function ServicesTableClient({
   services,
   deleteService,
 }: ServicesTableClientProps) {
+  const [items, setItems] = useState<Service[]>(services);
+  const { csrfToken } = useCsrfToken();
+
+  function swapOrder(idx1: number, idx2: number) {
+    if (idx1 < 0 || idx2 < 0 || idx1 >= items.length || idx2 >= items.length)
+      return;
+
+    const newItems = [...items];
+    const temp = newItems[idx1];
+    newItems[idx1] = newItems[idx2];
+    newItems[idx2] = temp;
+
+    const reordered = newItems.map((item, index) => ({
+      ...item,
+      order_index: index + 1,
+    }));
+
+    setItems(reordered);
+
+    saveReorder(reordered);
+  }
+
+  async function saveReorder(updated: Service[]) {
+    try {
+      const res = await fetch("/api/services/reorder", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          csrfToken: csrfToken,
+          items: updated.map((i) => ({
+            id: i.id,
+            order_index: i.order_index,
+          })),
+        }),
+      });
+
+      if (!res.ok) {
+        console.log(res);
+        throw new Error("Failed to reorder services");
+      }
+    } catch (err) {
+      console.error("Error reordering services:", err);
+    }
+  }
   if (!services || !Array.isArray(services) || services.length === 0) {
     return (
       <div className="py-12 text-center bg-white rounded-lg shadow">
@@ -99,7 +147,7 @@ export default function ServicesTableClient({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {services.map((service) => (
+            {items.map((service, index) => (
               <tr key={service.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <input
@@ -130,7 +178,23 @@ export default function ServicesTableClient({
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                  #{service.order_index}
+                  <div className="flex items-center gap-2">
+                    <span>#{service.order_index}</span>
+                    <button
+                        onClick={() => swapOrder(index, index - 1)}
+                        disabled={index === 0}
+                        className="px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-40"
+                    >
+                      ↑
+                    </button>
+                    <button
+                        onClick={() => swapOrder(index, index + 1)}
+                        disabled={index === items.length - 1}
+                        className="px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-40"
+                    >
+                      ↓
+                    </button>
+                  </div>
                 </td>
                 <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                   <div className="flex items-center justify-end space-x-3">
