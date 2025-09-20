@@ -126,36 +126,19 @@ export default function ServiceForm({ service }: ServiceFormProps) {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-              Title *
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter service title"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="order" className="block text-sm font-medium text-gray-700 mb-2">
-              Display Order
-            </label>
-            <input
-              type="number"
-              id="order"
-              value={orderIndex}
-              onChange={(e) => setOrderIndex(Number(e.target.value))}
-              min="0"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="0"
-            />
-          </div>
+        <div className="">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+            Title *
+          </label>
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter service title"
+          />
         </div>
 
         <div>
