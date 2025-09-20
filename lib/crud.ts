@@ -788,14 +788,6 @@ export async function handleReorder<T>(
     config: CrudConfig<T>
 ): Promise<NextResponse> {
   try {
-    const rateLimitResult = applyRateLimit(request, "bulk");
-    if (!rateLimitResult.success) {
-      return NextResponse.json(
-          { error: rateLimitResult.error },
-          { status: 429 }
-      );
-    }
-
     const authResult = await requireAuthAPI(request);
     if (authResult instanceof NextResponse) {
       return authResult;
