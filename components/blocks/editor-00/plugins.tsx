@@ -18,6 +18,7 @@ import {ElementFormatToolbarPlugin} from "@/components/editor/plugins/toolbar/el
 import {HistoryToolbarPlugin} from "@/components/editor/plugins/toolbar/history-toolbar-plugin";
 import {FontFormatToolbarPlugin} from "@/components/editor/plugins/toolbar/font-format-toolbar-plugin";
 import {LinkToolbarPlugin} from "@/components/editor/plugins/toolbar/link-toolbar-plugin";
+import {HistoryPlugin} from "@lexical/react/LexicalHistoryPlugin";
 
 export function Plugins() {
   const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -78,6 +79,7 @@ export function Plugins() {
                         <ClearEditorActionPlugin />
                     </>
                 </div>
+                <HistoryPlugin />
             </div>
         </ActionsPlugin>
     </div>

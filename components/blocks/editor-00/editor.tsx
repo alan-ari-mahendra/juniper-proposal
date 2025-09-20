@@ -12,6 +12,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 
 import { nodes } from "./nodes"
 import { Plugins } from "./plugins"
+import {cn} from "@/lib/utils";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",
@@ -27,14 +28,21 @@ export function Editor({
   editorSerializedState,
   onChange,
   onSerializedChange,
+  className
 }: {
   editorState?: EditorState
   editorSerializedState?: SerializedEditorState
   onChange?: (editorState: EditorState) => void
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void
+  className?: string
 }) {
   return (
-    <div className="bg-card overflow-hidden rounded-lg border shadow text-foreground">
+    <div
+      className={cn(
+        "bg-[#3B3B3B] overflow-hidden rounded-lg border shadow text-card",
+        className
+      )}
+    >
       <LexicalComposer
         initialConfig={{
           ...editorConfig,
