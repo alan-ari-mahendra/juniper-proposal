@@ -12,6 +12,7 @@ import MobileMenu from "@/components/MobileMenu";
 import { query } from "@/lib/db";
 import Link from "next/link";
 import "server-only";
+import {LexicalContent} from "@/components/editor/utils/convert-lexical-html";
 interface Post {
   id: number;
   title: string;
@@ -529,7 +530,7 @@ export default async function JuniperProposals() {
                       ))}
                     </div>
                     <blockquote className="mb-6 text-sm leading-relaxed text-gray-700">
-                      "{testimonial.content}"
+                      <LexicalContent content={testimonial.content} />
                     </blockquote>
                     <div className="pt-4 border-t border-gray-200">
                       <div className="font-medium text-gray-900">

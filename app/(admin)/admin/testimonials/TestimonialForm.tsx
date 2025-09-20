@@ -5,6 +5,8 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import {useToast} from "@/hooks/use-toast";
 import {useCsrfToken} from "@/hooks/use-csrf-token";
+import {SerializedEditorState} from "lexical";
+import { Editor } from "@/components/blocks/editor-00/editor"
 
 interface TestimonialFormProps {
   testimonial?: {
@@ -18,6 +20,35 @@ interface TestimonialFormProps {
     active: boolean
   }
 }
+export const initialValue = {
+  root: {
+    children: [
+      {
+        children: [
+          {
+            detail: 0,
+            format: 0,
+            mode: "normal",
+            style: "",
+            text: "Hello World 🚀",
+            type: "text",
+            version: 1,
+          },
+        ],
+        direction: "ltr",
+        format: "",
+        indent: 0,
+        type: "paragraph",
+        version: 1,
+      },
+    ],
+    direction: "ltr",
+    format: "",
+    indent: 0,
+    type: "root",
+    version: 1,
+  },
+} as unknown as SerializedEditorState
 
 export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
   const [isLoading, setIsLoading] = useState(false)
@@ -87,7 +118,8 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
       setIsLoading(false)
     }
   }
-
+  const [editorState, setEditorState] =
+      useState<SerializedEditorState>(initialValue)
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="px-6 py-4 border-b border-gray-200">
@@ -170,14 +202,13 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
           <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
             Testimonial Content *
           </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-            rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter the testimonial content..."
+          <Editor
+              editorSerializedState={editorState}
+              // onSerializedChange={(value) => setEditorState(value)}
+              onSerializedChange={(value) => {
+                setEditorState(value)
+                setContent(JSON.stringify(value))
+              }}
           />
         </div>
 

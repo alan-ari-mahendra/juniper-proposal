@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import UniversalBulkActions from "@/components/admin/UniversalBulkActions"
 import { testimonialsBulkConfig } from "@/lib/admin-configs"
+import {LexicalContent} from "@/components/editor/utils/convert-lexical-html";
 
 interface Testimonial {
   id: number
@@ -209,7 +210,8 @@ export default function TestimonialsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 line-clamp-3 max-w-xs">{testimonial.content}</div>
+                      {/*<div className="text-sm text-gray-900 line-clamp-3 max-w-xs">{testimonial.content}</div>*/}
+                      <LexicalContent  className="text-sm text-gray-900 line-clamp-3 max-w-xs" content={testimonial.content} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex flex-col space-y-1">
